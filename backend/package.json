@@ -1,0 +1,29 @@
+{
+  "name": "assignment4-backend",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Assignment 4 - Full-stack quiz application (Express + MongoDB REST API)",
+  "scripts": {
+    "start": "node ./bin/www",
+    "dev": "nodemon ./bin/www",
+    "seed": "node ./scripts/seed.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^18.0.7",
+    "express": "^4.22.3",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^9.11.2",
+    "morgan": "^1.12.1",
+    "passport": "^0.7.0",
+    "passport-jwt": "^4.0.1",
+    "passport-local": "^1.0.0",
+    "passport-local-mongoose": "^9.2.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}

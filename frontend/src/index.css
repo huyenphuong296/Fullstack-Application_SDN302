@@ -1,0 +1,11 @@
+body {
+  min-height: 100vh;
+}
+
+.auth-card {
+  max-width: 420px;
+}
+
+.option-label {
+  cursor: pointer;
+}
