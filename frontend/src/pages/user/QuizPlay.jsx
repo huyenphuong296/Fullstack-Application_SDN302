@@ -1,18 +1,22 @@
-import { useEffect } from 'react';
-import { Link, useParams } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import { useEffect } from "react";
+import { Link, useParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import {
-  fetchQuizzes, startQuiz, answerQuestion, nextQuestion, submitQuiz
-} from '../../features/quizzes/quizSlice';
+  fetchQuizzes,
+  startQuiz,
+  answerQuestion,
+  nextQuestion,
+  submitQuiz,
+} from "../../features/quizzes/quizSlice";
 
 export default function QuizPlay() {
-  const { quizId } = useParams();
+  const { quizId } = useParams(); //lấy quizId từ URL
   const dispatch = useDispatch();
   const { items, status, error, play } = useSelector((state) => state.quizzes);
-  const quiz = items.find((q) => q._id === quizId);
+  const quiz = items.find((q) => q._id === quizId); //tìm quiz trong store
 
   useEffect(() => {
-    if (status === 'idle') dispatch(fetchQuizzes());
+    if (status === "idle") dispatch(fetchQuizzes());
   }, [status, dispatch]);
 
   // New quiz opened -> reset the progress
@@ -20,10 +24,15 @@ export default function QuizPlay() {
     if (play.quizId !== quizId) dispatch(startQuiz(quizId));
   }, [quizId, play.quizId, dispatch]);
 
-  if (status === 'loading' && !quiz) {
-    return <div className="text-center py-5"><div className="spinner-border text-primary" role="status" /></div>;
+  if (status === "loading" && !quiz) {
+    return (
+      <div className="text-center py-5">
+        <div className="spinner-border text-primary" role="status" />
+      </div>
+    );
   }
-  if (status === 'failed') return <div className="alert alert-danger">{error}</div>;
+  if (status === "failed")
+    return <div className="alert alert-danger">{error}</div>;
   if (!quiz) {
     return (
       <div className="alert alert-warning">
@@ -40,11 +49,19 @@ export default function QuizPlay() {
       <div className="mx-auto" style={{ maxWidth: 640 }}>
         <div className="text-center mb-4">
           <h2>Quiz Completed</h2>
-          <p className="fs-5">Your score: {score} / {total}</p>
-          <button type="button" className="btn btn-primary me-2" onClick={() => dispatch(startQuiz(quizId))}>
+          <p className="fs-5">
+            Your score: {score} / {total}
+          </p>
+          <button
+            type="button"
+            className="btn btn-primary me-2"
+            onClick={() => dispatch(startQuiz(quizId))}
+          >
             Restart Quiz
           </button>
-          <Link to="/dashboard/quiz" className="btn btn-outline-secondary">Other quizzes</Link>
+          <Link to="/dashboard/quiz" className="btn btn-outline-secondary">
+            Other quizzes
+          </Link>
         </div>
 
         <h3 className="h5">Review</h3>
@@ -52,11 +69,17 @@ export default function QuizPlay() {
           {results.map((r, i) => (
             <li key={r.questionId} className="list-group-item">
               <div className="fw-semibold">
-                {r.correct ? '✅' : '❌'} {i + 1}. {r.text}
+                {r.correct ? "✅" : "❌"} {i + 1}. {r.text}
               </div>
               <div className="small">
-                Your answer: {r.selected === null ? '—' : r.options[r.selected]}
-                {!r.correct && <> · Correct answer: <strong>{r.options[r.correctAnswerIndex]}</strong></>}
+                Your answer: {r.selected === null ? "—" : r.options[r.selected]}
+                {!r.correct && (
+                  <>
+                    {" "}
+                    · Correct answer:{" "}
+                    <strong>{r.options[r.correctAnswerIndex]}</strong>
+                  </>
+                )}
               </div>
             </li>
           ))}
@@ -65,7 +88,7 @@ export default function QuizPlay() {
     );
   }
 
-  // ----- One question at a time -----
+  // ----- One question at a time ----- Hiện câu hỏi và chọn đáp án
   const question = quiz.questions[play.current];
   if (!question) return null;
   const selected = play.answers[question._id];
@@ -75,9 +98,9 @@ export default function QuizPlay() {
     e.preventDefault();
     if (selected === undefined) return;
     if (isLast) {
-      dispatch(submitQuiz({ quizId, answers: play.answers }));
+      dispatch(submitQuiz({ quizId, answers: play.answers })); // câu cuối → nộp bài
     } else {
-      dispatch(nextQuestion());
+      dispatch(nextQuestion()); // chưa hết → sang câu tiếp
     }
   };
 
@@ -98,22 +121,29 @@ export default function QuizPlay() {
               name={`q-${question._id}`}
               id={`q-${question._id}-${index}`}
               checked={selected === index}
-              onChange={() => dispatch(answerQuestion({ questionId: question._id, index }))}
+              onChange={() =>
+                dispatch(answerQuestion({ questionId: question._id, index }))
+              }
             />
-            <label className="form-check-label option-label" htmlFor={`q-${question._id}-${index}`}>
+            <label
+              className="form-check-label option-label"
+              htmlFor={`q-${question._id}-${index}`}
+            >
               {option}
             </label>
           </div>
         ))}
 
-        {play.error && <div className="alert alert-danger mt-3">{play.error}</div>}
+        {play.error && (
+          <div className="alert alert-danger mt-3">{play.error}</div>
+        )}
 
         <button
           type="submit"
           className="btn btn-primary mt-3"
           disabled={selected === undefined || play.submitting}
         >
-          {play.submitting ? 'Submitting…' : 'Submit Answer'}
+          {play.submitting ? "Submitting…" : "Submit Answer"}
         </button>
       </form>
     </div>
